@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<script>
+     function forward(){
+        console.log("hi");
+        Android.forwardFromWeb();
+    }
+    function stop(){
+        Android.stopFromWeb("stop");
+    }
+    function backward(){
+        Android.backWardFromWeb();
+    }
+    function left(){
+        Android.leftFromWeb("stop");
+    }
+    function right(){
+        Android.rightFromWeb();
+    }
+  </script>
+<style>
+        .no-select {
+          user-select: none; /* Prevent text selection */
+          -webkit-touch-callout: none; /* Disable long-press menu on iOS */
+          -webkit-user-select: none; /* Webkit browsers */
+          -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Safari */
+        }
+        body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    height: 100vh;
+  }
+
+  .button-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+ .button-container button {
+    width: calc(100% / 3);
+    height: calc(100vh / 3);
+    position: absolute;
+  }
+
+  .top-center {
+    top: 0;
+    left: 0;
+    transform: translateX(100%);
+  }
+
+  .right-center {
+    top: 0;
+    right: 0;
+    transform: translateY(100%);
+  }
+
+  .left-center {
+    bottom: 0;
+    left: 0;
+    transform: translateY(-100%);
+  }
+
+  .bottom-center {
+    bottom: 0;
+    right: 0;
+    transform: translateX(-100%);
+
+  }
+      </style>
+<body style="margin : 0px; overflow: hidden;">
+<div class="button-container">
+    <button onpointerdown="forward()" onpointerup="stop()" class="top-center">Forward</button>
+    <button onpointerdown="left()" onpointerup="stop()" class="left-center">Left</button>
+    <button onpointerdown="right()" onpointerup="stop()" class="right-center">Right</button>
+    <button onpointerdown="backward()" onpointerup="stop()" class="bottom-center">Back</button>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+
+<body>
+
+<button id = "noteIntrested">noteIntrested</button>
+<script>
+    const ab = document.getElementById("noteIntrested");
+    ab.addEventListener("click",function(){
+        Android.forwardFromWeb();
+        setTimeout(function () {
+            Android.rightFromWeb();
+
+
+        }, 1000);
+        setTimeout(function () {
+            Android.forwardFromWeb();
+
+
+
+        }, 2000);
+        setTimeout(function () {
+            Android.stopFromWeb("stopRobot");
+
+
+
+        }, 3000);
+
+
+    });
+
+</script>
+<button onclick="leftback()">leftback</button>
+<script>
+    function leftback(){
+        Android.leftBackFromWeb();
+    }
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+</head>
+
+<body>
+<script>
+/*function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Usage example:
+async function demo() {
+    for (let i = 0; i < 5; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        await sleep(i * 1000);
+    }
+    console.log('Done');
+}*/
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function demo() {
+    for (let i = 0; i < 15; i++) {
+        console.log(`Waiting ${i} seconds...`);
+        Android.forwardFromWeb();
+        await sleep(500);
+        Android.rightFromWeb();
+        await sleep(300);
+        Android.stopFromWeb("stop");
+        await sleep(200);
+    }
+    console.log('Done');
+}
+
+
+
+</script>
+<button onclick="demo()">Demo</button>
+
+
+
+
+</body>
+</html>

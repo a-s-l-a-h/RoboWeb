@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Page</title>
+</head>
+<body>
+    <div>
+        <input type="text" name="localPeerId" id="localPeerId" readonly><br><br><br>
+        <input type="text" name="remotePeerId" id="remotePeerId">
+        <button id="btn-call">Call</button><br><br>
+    </div>
+
+    <div id="container">
+        <h1>Local</h1>
+        <video autoplay="true" id="localVideo"></video>
+    </div>
+
+    <div>
+        <h1>Remote</h1>
+        <video autoplay="true" id="remoteVideo"></video>
+        <br><br>
+        <input type="text" id="input-message" placeholder="Type a message">
+        <button id="btn-send-message">Send Message</button>
+        <br>
+        <button onclick="send('w')">^</button><br>
+        <button onclick="send('l')"> < </button><br>
+        <button onclick="send('r')">></button><br>
+        <button onclick="send('x')"> x </button><br>
+        <button onclick="send('s')"> s </button><br>
+    </div>
+
+    <!-- Add a div for displaying messages -->
+    <div id="messages"></div>
+
+<script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+
+
+
+    <script>
+        // Get the value from the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var stringValue = urlParams.get('stringValue');
+
+        // Display the value in the console
+        console.log('String Value:', stringValue);
+
+        const peer = new Peer(stringValue);
+
+        // Variables to hold local stream and data connection
+let localStream;
+let dataConnection;
+
+        // Elements from the HTML
+const inputLocalPeerId = document.getElementById("localPeerId");
+const inputRemotePeerId = document.getElementById("remotePeerId");
+const btnCall = document.getElementById("btn-call");
+const inputMessage = document.getElementById("input-message");
+const btnSendMessage = document.getElementById("btn-send-message");
+
+        // Get user media and display the local video
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        localStream = stream;
+        const videoElement = document.getElementById("localVideo");
+        videoElement.srcObject = localStream;
+        videoElement.onloadedmetadata = () => videoElement.play();
+    });
+
+        // Event listener for when the local peer ID is generated
+peer.on("open", id => {
+            inputLocalPeerId.value = id;
+    });
+
+        // Event listener for the "Call" button
+        // creating dataconnection for text sharing and callon for video streaming 
+btnCall.addEventListener("click", function () {
+    const remotePeerId = inputRemotePeerId.value;
+
+            // Establish a call for video sharing
+    const call = peer.call(remotePeerId, localStream);
+
+            // Handle incoming stream for video call
+    call.on("stream", stream => {
+        const remoteVideo = document.getElementById("remoteVideo");
+        remoteVideo.srcObject = stream;
+        remoteVideo.onloadedmetadata = () => remoteVideo.play();
+    });
+
+            // Establish a data connection for text messaging
+    dataConnection = peer.connect(remotePeerId);
+
+    dataConnection.on("open", () => {
+        console.log("Data connection opened");
+    });
+
+});
+
+        // Event listener for the "Send Message" button
+        // it's for sending messages
+btnSendMessage.addEventListener("click", function () {
+            const message = inputMessage.value;
+
+            // Send the text message over the data connection
+            if (dataConnection) {
+                dataConnection.send(message);
+                console.log('sended')
+            }
+
+            // Clear the input field
+            inputMessage.value = "";
+});
+
+
+// robot control text sending server to reciver
+
+function send(SendingText){
+    if (dataConnection) {
+                dataConnection.send(SendingText);
+                console.log('sended'+SendingText);
+            }
+
+}
+
+
+//reading message
+
+peer.on('connection', function(dataConnection) {
+  dataConnection.on('data', function(data){
+    
+    // Will print 'hi!'
+    //console.log(data);
+    if(data=="w"){
+        console.log(data);
+        Android.forwardFromWeb();
+    }
+    if(data=="l"){
+        Android.leftFromWeb("left");
+    }
+    if(data=="r"){
+        Android.rightFromWeb();
+    }
+    if(data=="s"){
+        Android.stopFromWeb("stop");
+    }
+    if(data=="x"){
+        Android.backWardFromWeb();
+    }
+    console.log(data);
+  });
+});
+
+
+
+        // Event listener for handling incoming calls
+
+        //showing video stream from server
+peer.on("call", call => {
+    call.answer(localStream);
+    call.on("stream", stream => {
+        const remoteVideo = document.getElementById("remoteVideo");
+        remoteVideo.srcObject = stream;
+        remoteVideo.onloadedmetadata = () => remoteVideo.play();
+            });
+});
+    </script>
+
+</body>
+</html>

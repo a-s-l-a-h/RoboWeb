@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination Page</title>
+    <style>
+        .no-select {
+          user-select: none; /* Prevent text selection */
+          -webkit-touch-callout: none; /* Disable long-press menu on iOS */
+          -webkit-user-select: none; /* Webkit browsers */
+          -moz-user-select: none; /* Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Safari */
+        }
+        body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    height: 100vh;
+  }
+
+  .button-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+ .button-container button {
+    width: calc(100% / 3);
+    height: calc(100vh / 3);
+    position: absolute;
+  }
+
+  .top-center {
+    top: 0;
+    left: 0;
+    transform: translateX(100%);
+  }
+
+  .right-center {
+    top: 0;
+    right: 0;
+    transform: translateY(100%);
+  }
+
+  .left-center {
+    bottom: 0;
+    left: 0;
+    transform: translateY(-100%);
+  }
+
+  .bottom-center {
+    bottom: 0;
+    right: 0;
+    transform: translateX(-100%);
+
+  }
+
+  /* Individual button styling */
+
+      </style>
+</head>
+<body>
+    <input type="text" name="localPeerId" id="localPeerId" readonly><br><br>
+    <input type="text" name="remotePeerId" id="remotePeerId">
+    <button id="btn-call">Call</button><br><br>
+    <br>
+
+<div class="button-container">
+    <button onpointerdown="send('w')" onpointerup="send('s')" class="top-center">Forward</button>
+    <button onpointerdown="send('l')" onpointerup="send('s')" class="left-center">Left</button>
+    <button onpointerdown="send('r')" onpointerup="send('s')" class="right-center">Right</button>
+    <button onpointerdown="send('x')" onpointerup="send('s')" class="bottom-center">Back</button>
+</div>
+
+
+
+
+<script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+
+<script>
+    // Get the value from the URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var stringValue = urlParams.get('stringValue');
+
+    // Display the value in the console
+    console.log('String Value:', stringValue);
+
+    // Set maxPacketLifeTime and maxRetransmits to reduce latency
+    const peer = new Peer(stringValue);
+
+    // Variables to hold local stream and data connection
+    let localStream;
+    let dataConnection;
+
+    // Elements from the HTML
+    const inputLocalPeerId = document.getElementById("localPeerId");
+    const inputRemotePeerId = document.getElementById("remotePeerId");
+    const btnCall = document.getElementById("btn-call");
+    const inputMessage = document.getElementById("input-message");
+    const btnSendMessage = document.getElementById("btn-send-message");
+
+    // Get user media and display the local video
+
+
+    // Event listener for when the local peer ID is generated
+    peer.on("open", id => {
+        inputLocalPeerId.value = id;
+    });
+
+    // Event listener for the "Call" button
+    btnCall.addEventListener("click", function () {
+        const remotePeerId = inputRemotePeerId.value;
+
+        // Establish a call for video sharing
+        const call = peer.call(remotePeerId, localStream);
+
+        // Handle incoming stream for video call
+
+
+        // Establish a data connection for text messaging
+        dataConnection = peer.connect(remotePeerId);
+
+        dataConnection.on("open", () => {
+            console.log("Data connection opened");
+        });
+
+    });
+
+    // Event listener for the "Send Message" button
+
+
+    // Robot control text sending server to receiver
+    function send(SendingText){
+        if (dataConnection) {
+            dataConnection.send(SendingText);
+            console.log('sended'+SendingText);
+        }
+    }
+
+    // Reading message
+    peer.on('connection', function(dataConnection) {
+        dataConnection.on('data', function(data){
+            console.log(data);
+            if(data=="w"){
+                Android.forwardFromWeb();
+            }
+            if(data=="l"){
+                Android.leftFromWeb("left");
+            }
+            if(data=="r"){
+                Android.rightFromWeb();
+            }
+            if(data=="s"){
+                Android.stopFromWeb("stop");
+            }
+            if(data=="x"){
+                Android.backWardFromWeb();
+            }
+        });
+    });
+
+    // Event listener for handling incoming calls
+    // Showing video stream from server
+    peer.on("call", call => {
+        call.answer(localStream);
+    
+    });
+</script>
+
+</body>
+</html>

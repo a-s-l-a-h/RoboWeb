@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Page</title>
+</head>
+<body>
+
+    <label for="inputText">Enter Text:</label>
+    <input type="text" id="inputText" required>
+    
+    <!-- Use JavaScript to navigate to the second page with the string value as a parameter -->
+    <a href="javascript:void(0);" onclick="redirectToDestination()">Submit</a>
+
+    <script>
+        function redirectToDestination() {
+            // Get the value from the input field
+            var stringValue = document.getElementById('inputText').value;
+
+            // Construct the URL with the string value as a parameter
+            var destinationURL = 'action.html?stringValue=' + encodeURIComponent(stringValue);
+
+            // Redirect to the second page
+            window.location.href = destinationURL;
+        }
+    </script>
+
+</body>
+</html>
